@@ -1,0 +1,71 @@
+import numpy as np
+
+
+class Room:
+    def __init__(self, name, item):
+        self.name = name
+        self.item = item
+
+    def room_name(self):
+        return self.name
+
+    def available_item(self):
+        return self.item
+
+
+#############
+#  --GH--
+# -WH F EH-
+# --  D DE-
+#  --B--
+class Game:
+    def __init__(self):
+        self.directions = {'N': [-1, 0], 'S': [1, 0], 'E': [0, 1], 'W': [0, -1]}
+        self.location = [0, 2]
+        self.game_map = [
+            [None, None, Room('Grand Hall', None), None, None],
+            [None, Room('West Hall', 'mirror'), Room('Foyer', 'candle'), Room('East Hall', 'sword'), None],
+            [None, None, Room('Dungeon', 'shield'), Room('Dead End', 'dagger'), None],
+            [None, None, Room('Boss Location', None), None, None],
+        ]
+
+    def current_location(self):
+        print(f"Current Location is {self.location}")
+
+    def current_room(self):
+        room = self.game_map[self.location[0]][self.location[1]]
+        print(f"Currently in Room '{room.name}'")
+
+    def move(self, cmd):
+        mvmt_delta = np.array(self.directions[cmd])
+        cur_location = np.array(self.location)
+        new_location = np.add(cur_location, mvmt_delta)
+
+        # You can not exceed the N/S bounds of the gamemap
+        if (new_location[0] < 0 or new_location[0] >= 3):
+            print('You are are the edge of the map!')
+            return False
+        elif (new_location[1] < 0 or new_location[1] >= 4):
+            print('You are are the edge of the map!')
+            return False
+
+        if (self.game_map[new_location[0]][new_location[1]] == None):
+            print('This is no room in that direction! Try another')
+            return False
+
+        self.location = new_location
+        print(f"You moved {cmd}")
+        self.current_room()
+
+
+class Hero:
+    def __init__(self, name):
+        self.name = name
+
+
+main_game = Game()
+main_game.current_room()
+
+main_game.move('N')  # We begin at edge so we cant go up
+main_game.move('S')  # Go down to Foyer
+main_game.move('W')  # Go left to West hall
